@@ -26,5 +26,3 @@ dist-ssr
 # environment
 venv/*
 venv
-package.json
-package-lock.json
