@@ -1,0 +1,156 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-image: url('https://source.unsplash.com/random/1920x1080/?city');
+  background-size: cover;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: white;
+}
+
+.app-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: #333;
+}
+
+h1 {
+  color: #1e90ff;
+}
+
+.fetch-button {
+  background-color: #1e90ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.fetch-button:hover {
+  background-color: #187bcd;
+}
+
+.city-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.city-button {
+  background-color: #4682b4;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.city-button:hover {
+  background-color: #357abd;
+}
+
+.response {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: left;
+  overflow-x: auto;
+  color: #333;
+}
+
+.city-image {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.location-symbol {
+  font-size: 24px;
+  margin-right: 10px;
+  color: #1e90ff;
+}
+
+.weather-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+}
