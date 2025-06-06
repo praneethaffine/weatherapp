@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Configure CORS
+# CORS setup
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+	CORSMiddleware,
+	allow_origins=["*"],
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"],
 )
 
 @app.get("/locations")
