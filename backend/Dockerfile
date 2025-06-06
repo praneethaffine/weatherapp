@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED 1
 
 # Install dependencies
 COPY req.txt .
-RUN pip install --no-cache-dir -r req.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the FastAPI application code to the container
 COPY . .
