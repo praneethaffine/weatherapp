@@ -1,44 +1,45 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
-app = FastAPI()
+app = FastAPI(title="Weather API", description="A simple weather API with mock data")
 
-# CORS setup
+# Configure CORS to allow requests from frontend
 app.add_middleware(
-	CORSMiddleware,
-	allow_origins=["*"],
-	allow_credentials=True,
-	allow_methods=["*"],
-	allow_headers=["*"],
+    CORSMiddleware,
+    allow_origins=["*"],  # Vite default ports
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-@app.get("/locations")
-async def get_locations():
-    return ["New York", "Washington", "Chicago"]
+# Mock weather data
+weather_data = {
+    "newyork": {"city": "New York", "temperature": "25°C", "condition": "Sunny"},
+    "chicago": {"city": "Chicago", "temperature": "-18°C", "condition": "snowy"},
+    "washington": {
+        "city": "Washington",
+        "temperature": "12°C",
+        "condition": "Cloudy",
+    },
+}
 
-@app.get("/newyork")
-async def get_new_york():
-    return {
-        "info": "Welcome to New York!",
-        "population": "8.4 million",
-        "famous_landmark": "Statue of Liberty",
-        "weather": "Variable, with hot summers and cold winters"
-    }
 
-@app.get("/washington")
-async def get_washington():
-    return {
-        "info": "Welcome to Washington!",
-        "population": "0.7 million",
-        "famous_landmark": "White House",
-        "weather": "Humid subtropical climate with hot summers"
-    }
+@app.get("/")
+def read_root():
+    return {"message": "Weather API is running!"}
 
-@app.get("/chicago")
-async def get_chicago():
-    return {
-        "info": "Welcome to Chicago!",
-        "population": "2.7 million",
-        "famous_landmark": "Willis Tower",
-        "weather": "Humid continental climate with cold winters"
-    } 
+
+@app.get("/weather/newyork")
+def get_newyork_weather():
+    return weather_data["newyork"]
+
+
+@app.get("/weather/chicago")
+def get_chicago_weather():
+    return weather_data["chicago"]
+
+
+@app.get("/weather/washington")
+def get_washington_weather():
+    return weather_data["washington"]
