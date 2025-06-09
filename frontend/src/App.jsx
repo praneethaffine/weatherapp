@@ -11,22 +11,54 @@ function App() {
   const [selectedCity, setSelectedCity] = useState(null)
   const [apiStatus, setApiStatus] = useState('checking')
 
+  // Create axios instance with better configuration
+  const apiClient = axios.create({
+    baseURL: API_URL,
+    timeout: 10000,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  // Add debug logging
+  useEffect(() => {
+    console.log('🔧 Environment Debug:', {
+      API_URL,
+      NODE_ENV: import.meta.env.NODE_ENV,
+      MODE: import.meta.env.MODE
+    })
+  }, [])
+
   // Check if API is running on component mount
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const response = await axios.get(`${API_URL}/`)
+        console.log('🔍 Checking API status at:', API_URL)
+        const response = await apiClient.get('/')
+        console.log('✅ API Response:', response.data)
+        
         if (response.data.message === "Weather API is running!") {
           setApiStatus('connected')
         }
       } catch (err) {
+        console.error('❌ API connection failed:', {
+          message: err.message,
+          code: err.code,
+          status: err.response?.status,
+          statusText: err.response?.statusText,
+          url: err.config?.url
+        })
         setApiStatus('disconnected')
-        console.error('API connection failed:', err)
       }
     }
     
-    checkApiStatus()
-  }, [])
+    if (API_URL) {
+      checkApiStatus()
+    } else {
+      setApiStatus('disconnected')
+      setError('API URL not configured. Check your environment variables.')
+    }
+  }, [API_URL])
 
   const fetchWeather = async (cityKey, cityName) => {
     setLoading(true)
@@ -34,19 +66,35 @@ function App() {
     setSelectedCity(cityName)
     
     try {
-      const response = await axios.get(`${API_URL}/weather/${cityKey}`)
+      console.log(`🌤️ Fetching weather for ${cityName} at: ${API_URL}/weather/${cityKey}`)
+      const response = await apiClient.get(`/weather/${cityKey}`)
+      console.log('✅ Weather data received:', response.data)
+      
       setWeatherData(response.data)
       setApiStatus('connected')
     } catch (err) {
+      console.error('❌ Weather fetch failed:', {
+        message: err.message,
+        code: err.code,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data
+      })
+
       if (err.response?.status === 404) {
         setError(`Weather data for ${cityName} not found.`)
-      } else if (err.code === 'ERR_NETWORK') {
-        setError('Cannot connect to weather API. Please ensure the backend is running on port 9002.')
+      } else if (err.response?.status === 401) {
+        setError('Authentication required. Please refresh the page and log in.')
+      } else if (err.response?.status === 403) {
+        setError('Access forbidden. Please check your permissions.')
+      } else if (err.code === 'ERR_NETWORK' || err.code === 'ECONNABORTED') {
+        setError('Cannot connect to weather API. Please check your internet connection and try again.')
         setApiStatus('disconnected')
+      } else if (err.code === 'TIMEOUT') {
+        setError('Request timed out. Please try again.')
       } else {
-        setError('Failed to fetch weather data. Please try again.')
+        setError(`Failed to fetch weather data: ${err.message}`)
       }
-      console.error('Error fetching weather:', err)
       setWeatherData(null)
     } finally {
       setLoading(false)
@@ -88,6 +136,22 @@ function App() {
     }
   }
 
+  const retryConnection = async () => {
+    setApiStatus('checking')
+    setError(null)
+    
+    try {
+      const response = await apiClient.get('/')
+      if (response.data.message === "Weather API is running!") {
+        setApiStatus('connected')
+        setError(null)
+      }
+    } catch (err) {
+      setApiStatus('disconnected')
+      setError('Still unable to connect to API. Please check the backend service.')
+    }
+  }
+
   return (
     <div className="App">
       <div className="container">
@@ -96,6 +160,14 @@ function App() {
         
         <div className="api-status" style={{ color: getApiStatusColor() }}>
           {getApiStatusText()}
+          {apiStatus === 'disconnected' && (
+            <button 
+              style={{ marginLeft: '10px', fontSize: '12px' }}
+              onClick={retryConnection}
+            >
+              🔄 Retry
+            </button>
+          )}
         </div>
         
         <div className="button-group">
@@ -129,9 +201,15 @@ function App() {
           <div className="error">
             <p>❌ {error}</p>
             {apiStatus === 'disconnected' && (
-              <p className="error-help">
-                💡 Make sure to run: <code>python main.py</code> in your backend directory
-              </p>
+              <div className="error-help">
+                <p>💡 Troubleshooting steps:</p>
+                <ul style={{ textAlign: 'left', fontSize: '14px' }}>
+                  <li>Check if backend is running at: <code>{API_URL}</code></li>
+                  <li>Verify CORS settings allow your domain</li>
+                  <li>Check Azure AD authentication settings</li>
+                  <li>Look at browser console for detailed errors</li>
+                </ul>
+              </div>
             )}
           </div>
         )}
@@ -156,8 +234,11 @@ function App() {
         )}
 
         <footer className="footer">
-          <p>API URL: {API_URL}</p>
+          <p>API URL: {API_URL || 'Not configured'}</p>
           <p>Endpoints: /weather/newyork, /weather/chicago, /weather/washington</p>
+          <p style={{ fontSize: '12px', color: '#666' }}>
+            Check browser console for detailed debug information
+          </p>
         </footer>
       </div>
     </div>
