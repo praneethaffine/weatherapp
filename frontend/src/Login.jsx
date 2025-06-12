@@ -15,7 +15,7 @@ const LoginButton = () => {
 
       //  add backend url
       const tokenResponse = await instance.acquireTokenSilent({
-        scopes: ["api://<your-backend-client-id>/read"],
+        scopes: ["api://13a6fa3d-0f9b-4598-b2b5-756be226505e/user_impersonation"],
         account: loginResponse.account,
       });
 
@@ -30,3 +30,4 @@ const LoginButton = () => {
 };
 
 export default LoginButton;
+0

@@ -6,5 +6,4 @@ azure_scheme = SingleTenantAzureAuthorizationCodeBearer(
     scopes={
         "api://13a6fa3d-0f9b-4598-b2b5-756be226505e/user_impersonation": "access_as_user"
     },
-    allow_guest_users=True,
 )
